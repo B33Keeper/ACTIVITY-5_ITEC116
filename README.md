@@ -43,7 +43,7 @@ npm install
 npm run start:dev
 ```
 Backend runs on: `http://localhost:4000`  
-API Docs: `http://localhost:4000/api`
+API Docs: `http://localhost:4000/api` (Swagger - see `server/README.md` for testing examples)
 
 ### Frontend (Client)
 ```bash
