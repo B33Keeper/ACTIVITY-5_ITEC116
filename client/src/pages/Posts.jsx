@@ -64,13 +64,39 @@ export default function Posts() {
       setMessage('Post created');
       await load();
     } catch (e) {
-      setMessage(e?.response?.data?.message || 'Failed to create');
+      const errorMessage = e?.response?.data?.message || e?.message || 'Failed to create post';
+      setMessage(errorMessage);
+      
+      // If it's a file error, clear the file input
+      if (errorMessage.includes('file') || errorMessage.includes('File')) {
+        setSelectedImage(null);
+        setImagePreview(null);
+      }
     }
   };
 
   const handleImageSelect = (e) => {
     const file = e.target.files[0];
     if (file) {
+      // Validate file type
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+      const allowedExtensions = /\.(jpg|jpeg|png|gif|webp)$/i;
+      
+      if (!allowedTypes.includes(file.type) || !allowedExtensions.test(file.name)) {
+        setMessage('Invalid file type. Accepted formats: JPG, JPEG, PNG, GIF, WEBP');
+        e.target.value = ''; // Clear the input
+        return;
+      }
+      
+      // Validate file size (5MB max)
+      const maxSize = 5 * 1024 * 1024; // 5MB in bytes
+      if (file.size > maxSize) {
+        setMessage('File too large. Maximum size is 5MB.');
+        e.target.value = ''; // Clear the input
+        return;
+      }
+      
+      setMessage(''); // Clear any previous messages
       setSelectedImage(file);
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -124,7 +150,14 @@ export default function Posts() {
       setMessage('Post updated');
       await load();
     } catch (e) {
-      setMessage(e?.response?.data?.message || 'Failed to update');
+      const errorMessage = e?.response?.data?.message || e?.message || 'Failed to update post';
+      setMessage(errorMessage);
+      
+      // If it's a file error, clear the file input
+      if (errorMessage.includes('file') || errorMessage.includes('File')) {
+        setSelectedImage(null);
+        setImagePreview(null);
+      }
     }
   };
 
@@ -378,11 +411,14 @@ export default function Posts() {
             <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', fontWeight: 500 }}>Image (optional)</label>
             <input
               type="file"
-              accept="image/*"
+              accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
               onChange={handleImageSelect}
               disabled={!canCreate || editingPost !== null}
               style={{ marginBottom: '0.75rem' }}
             />
+            <div className="muted" style={{ fontSize: '0.75rem', marginTop: '0.25rem', marginBottom: '0.75rem' }}>
+              Accepted formats: JPG, JPEG, PNG, GIF, WEBP (Max 5MB)
+            </div>
             {imagePreview && (
               <div style={{ marginTop: '0.75rem', position: 'relative', display: 'inline-block' }}>
                 <img

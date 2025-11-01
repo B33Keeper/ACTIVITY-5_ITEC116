@@ -17,6 +17,10 @@ const common_1 = require("@nestjs/common");
 const swagger_1 = require("@nestjs/swagger");
 const passport_1 = require("@nestjs/passport");
 const users_service_1 = require("./users.service");
+const platform_express_1 = require("@nestjs/platform-express");
+const common_2 = require("@nestjs/common");
+const multer_1 = require("multer");
+const path_1 = require("path");
 class CreateUserDto {
     username;
     email;
@@ -40,6 +44,18 @@ let UsersController = class UsersController {
     }
     create(dto) {
         return { message: 'Use /auth/register to create users' };
+    }
+    getProfile(req) {
+        return this.usersService.findOne(req.user.userId);
+    }
+    async updateProfile(req, body, file) {
+        const userId = req.user.userId;
+        const username = body.username && body.username.trim() !== '' ? body.username.trim() : undefined;
+        const email = body.email && body.email.trim() !== '' ? body.email.trim() : undefined;
+        const password = body.password && body.password.trim() !== '' ? body.password.trim() : undefined;
+        const currentPassword = body.currentPassword && body.currentPassword.trim() !== '' ? body.currentPassword.trim() : undefined;
+        const profilePictureUrl = file ? `/uploads/${file.filename}` : undefined;
+        return this.usersService.update(userId, username, email, password, currentPassword, profilePictureUrl);
     }
     update(id, dto) {
         return this.usersService.update(Number(id), dto.username, dto.email, dto.password);
@@ -80,6 +96,52 @@ __decorate([
     __metadata("design:paramtypes", [CreateUserDto]),
     __metadata("design:returntype", void 0)
 ], UsersController.prototype, "create", null);
+__decorate([
+    (0, common_1.Get)('profile/me'),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
+    __param(0, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], UsersController.prototype, "getProfile", null);
+__decorate([
+    (0, common_1.Put)('profile'),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, swagger_1.ApiConsumes)('multipart/form-data'),
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
+    (0, common_2.UseInterceptors)((0, platform_express_1.FileInterceptor)('profilePicture', {
+        storage: (0, multer_1.diskStorage)({
+            destination: './uploads',
+            filename: (req, file, cb) => {
+                const randomName = Array(32)
+                    .fill(null)
+                    .map(() => Math.round(Math.random() * 16).toString(16))
+                    .join('');
+                cb(null, `profile_${randomName}${(0, path_1.extname)(file.originalname)}`);
+            },
+        }),
+        fileFilter: (req, file, cb) => {
+            const allowedExtensions = /\.(jpg|jpeg|png|gif|webp)$/i;
+            const allowedMimeTypes = /^image\/(jpeg|jpg|png|gif|webp)$/i;
+            const hasValidExtension = allowedExtensions.test(file.originalname);
+            const hasValidMimeType = allowedMimeTypes.test(file.mimetype);
+            if (!hasValidExtension || !hasValidMimeType) {
+                const error = new Error('Invalid file type. Accepted formats: JPG, JPEG, PNG, GIF, WEBP');
+                error.code = 'INVALID_FILE_TYPE';
+                return cb(error, false);
+            }
+            cb(null, true);
+        },
+        limits: { fileSize: 5 * 1024 * 1024 },
+    })),
+    __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_2.UploadedFile)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object, Object]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "updateProfile", null);
 __decorate([
     (0, common_1.Put)(':id'),
     (0, swagger_1.ApiBearerAuth)(),

@@ -3,5 +3,6 @@ export declare class UserEntity {
     username: string;
     email: string;
     passwordHash: string;
+    profilePictureUrl: string | null;
     createdAt: Date;
 }

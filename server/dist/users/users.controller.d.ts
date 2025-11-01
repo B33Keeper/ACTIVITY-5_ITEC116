@@ -18,11 +18,13 @@ export declare class UsersController {
         offset: number;
         limit: number;
     }>;
-    findOne(id: string): Promise<import("./user.entity").UserEntity>;
+    findOne(id: string): Promise<Omit<import("./user.entity").UserEntity, "passwordHash">>;
     create(dto: CreateUserDto): {
         message: string;
     };
-    update(id: string, dto: UpdateUserDto): Promise<import("./user.entity").UserEntity>;
+    getProfile(req: any): Promise<Omit<import("./user.entity").UserEntity, "passwordHash">>;
+    updateProfile(req: any, body: any, file?: Express.Multer.File): Promise<Omit<import("./user.entity").UserEntity, "passwordHash">>;
+    update(id: string, dto: UpdateUserDto): Promise<Omit<import("./user.entity").UserEntity, "passwordHash">>;
     remove(id: string): Promise<{
         message: string;
     }>;

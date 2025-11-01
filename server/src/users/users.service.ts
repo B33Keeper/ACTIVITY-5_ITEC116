@@ -21,15 +21,17 @@ export class UsersService {
     return { items, total, offset, limit };
   }
 
-  async findOne(id: number) {
+  async findOne(id: number): Promise<Omit<UserEntity, 'passwordHash'>> {
     const user = await this.usersRepo.findOne({
       where: { id },
-      select: ['id', 'username', 'email', 'createdAt'], // Exclude passwordHash
+      // Don't use select - we want all fields except passwordHash for profile
     });
     if (!user) {
       throw new NotFoundException('User not found');
     }
-    return user;
+    // Return user data without passwordHash
+    const { passwordHash, ...userWithoutPassword } = user;
+    return userWithoutPassword as Omit<UserEntity, 'passwordHash'>;
   }
 
   async findByEmail(email: string): Promise<UserEntity | null> {
@@ -50,17 +52,38 @@ export class UsersService {
     username?: string,
     email?: string,
     password?: string,
-  ): Promise<UserEntity> {
+    currentPassword?: string,
+    profilePictureUrl?: string,
+  ): Promise<Omit<UserEntity, 'passwordHash'>> {
     const user = await this.usersRepo.findOne({ where: { id } });
     if (!user) {
       throw new NotFoundException('User not found');
     }
-    if (username !== undefined) user.username = username;
-    if (email !== undefined) user.email = email;
-    if (password !== undefined) {
+    
+    // If password is being changed, verify current password
+    if (password && currentPassword) {
+      const isValidPassword = await bcrypt.compare(currentPassword, user.passwordHash);
+      if (!isValidPassword) {
+        throw new NotFoundException('Current password is incorrect');
+      }
       user.passwordHash = await bcrypt.hash(password, 10);
     }
-    return this.usersRepo.save(user);
+    
+    // Only update fields that are provided (not undefined and not empty string)
+    if (username !== undefined && username !== null && username !== '') {
+      user.username = username;
+    }
+    if (email !== undefined && email !== null && email !== '') {
+      user.email = email;
+    }
+    if (profilePictureUrl !== undefined) {
+      user.profilePictureUrl = profilePictureUrl || null;
+    }
+    
+    const savedUser = await this.usersRepo.save(user);
+    // Return user without passwordHash
+    const { passwordHash: _, ...userWithoutPassword } = savedUser;
+    return userWithoutPassword as Omit<UserEntity, 'passwordHash'>;
   }
 
   async remove(id: number) {

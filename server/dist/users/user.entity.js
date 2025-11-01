@@ -16,6 +16,7 @@ let UserEntity = class UserEntity {
     username;
     email;
     passwordHash;
+    profilePictureUrl;
     createdAt;
 };
 exports.UserEntity = UserEntity;
@@ -35,6 +36,10 @@ __decorate([
     (0, typeorm_1.Column)({ type: 'varchar', length: 255 }),
     __metadata("design:type", String)
 ], UserEntity.prototype, "passwordHash", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'varchar', length: 500, nullable: true, default: null }),
+    __metadata("design:type", Object)
+], UserEntity.prototype, "profilePictureUrl", void 0);
 __decorate([
     (0, typeorm_1.CreateDateColumn)(),
     __metadata("design:type", Date)

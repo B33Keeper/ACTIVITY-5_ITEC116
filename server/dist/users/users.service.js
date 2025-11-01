@@ -68,12 +68,12 @@ let UsersService = class UsersService {
     async findOne(id) {
         const user = await this.usersRepo.findOne({
             where: { id },
-            select: ['id', 'username', 'email', 'createdAt'],
         });
         if (!user) {
             throw new common_1.NotFoundException('User not found');
         }
-        return user;
+        const { passwordHash, ...userWithoutPassword } = user;
+        return userWithoutPassword;
     }
     async findByEmail(email) {
         return this.usersRepo.findOne({ where: { email } });
@@ -85,19 +85,30 @@ let UsersService = class UsersService {
         const user = this.usersRepo.create({ username, email, passwordHash });
         return this.usersRepo.save(user);
     }
-    async update(id, username, email, password) {
+    async update(id, username, email, password, currentPassword, profilePictureUrl) {
         const user = await this.usersRepo.findOne({ where: { id } });
         if (!user) {
             throw new common_1.NotFoundException('User not found');
         }
-        if (username !== undefined)
-            user.username = username;
-        if (email !== undefined)
-            user.email = email;
-        if (password !== undefined) {
+        if (password && currentPassword) {
+            const isValidPassword = await bcrypt.compare(currentPassword, user.passwordHash);
+            if (!isValidPassword) {
+                throw new common_1.NotFoundException('Current password is incorrect');
+            }
             user.passwordHash = await bcrypt.hash(password, 10);
         }
-        return this.usersRepo.save(user);
+        if (username !== undefined && username !== null && username !== '') {
+            user.username = username;
+        }
+        if (email !== undefined && email !== null && email !== '') {
+            user.email = email;
+        }
+        if (profilePictureUrl !== undefined) {
+            user.profilePictureUrl = profilePictureUrl || null;
+        }
+        const savedUser = await this.usersRepo.save(user);
+        const { passwordHash: _, ...userWithoutPassword } = savedUser;
+        return userWithoutPassword;
     }
     async remove(id) {
         const user = await this.usersRepo.findOne({ where: { id } });

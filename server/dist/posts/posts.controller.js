@@ -93,8 +93,14 @@ __decorate([
             },
         }),
         fileFilter: (req, file, cb) => {
-            if (!file.originalname.match(/\.(jpg|jpeg|png|gif|webp)$/)) {
-                return cb(new Error('Only image files are allowed!'), false);
+            const allowedExtensions = /\.(jpg|jpeg|png|gif|webp)$/i;
+            const allowedMimeTypes = /^image\/(jpeg|jpg|png|gif|webp)$/i;
+            const hasValidExtension = allowedExtensions.test(file.originalname);
+            const hasValidMimeType = allowedMimeTypes.test(file.mimetype);
+            if (!hasValidExtension || !hasValidMimeType) {
+                const error = new Error('Invalid file type. Accepted formats: JPG, JPEG, PNG, GIF, WEBP');
+                error.code = 'INVALID_FILE_TYPE';
+                return cb(error, false);
             }
             cb(null, true);
         },
@@ -127,8 +133,14 @@ __decorate([
             },
         }),
         fileFilter: (req, file, cb) => {
-            if (!file.originalname.match(/\.(jpg|jpeg|png|gif|webp)$/)) {
-                return cb(new Error('Only image files are allowed!'), false);
+            const allowedExtensions = /\.(jpg|jpeg|png|gif|webp)$/i;
+            const allowedMimeTypes = /^image\/(jpeg|jpg|png|gif|webp)$/i;
+            const hasValidExtension = allowedExtensions.test(file.originalname);
+            const hasValidMimeType = allowedMimeTypes.test(file.mimetype);
+            if (!hasValidExtension || !hasValidMimeType) {
+                const error = new Error('Invalid file type. Accepted formats: JPG, JPEG, PNG, GIF, WEBP');
+                error.code = 'INVALID_FILE_TYPE';
+                return cb(error, false);
             }
             cb(null, true);
         },

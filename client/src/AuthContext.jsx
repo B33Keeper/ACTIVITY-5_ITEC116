@@ -5,11 +5,15 @@ export const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [token, setToken] = useState(() => localStorage.getItem('token'));
+  const [username, setUsername] = useState(() => localStorage.getItem('username') || '');
 
   const login = async (email, password) => {
     const res = await api.post('/auth/login', { email, password });
     localStorage.setItem('token', res.access_token);
-    if (res.username) localStorage.setItem('username', res.username);
+    if (res.username) {
+      localStorage.setItem('username', res.username);
+      setUsername(res.username);
+    }
     setToken(res.access_token);
   };
 
@@ -21,11 +25,18 @@ export function AuthProvider({ children }) {
     localStorage.removeItem('token');
     localStorage.removeItem('username');
     setToken(null);
+    setUsername('');
   };
 
-  const value = useMemo(() => ({ token, login, register, logout }), [token]);
+  const value = useMemo(() => ({ token, username, login, register, logout }), [token, username]);
 
-  useEffect(() => {}, [token]);
+  useEffect(() => {
+    // Sync username from localStorage on mount
+    const storedUsername = localStorage.getItem('username');
+    if (storedUsername && storedUsername !== username) {
+      setUsername(storedUsername);
+    }
+  }, [token]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

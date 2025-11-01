@@ -9,11 +9,11 @@ export declare class UsersService {
         offset: number;
         limit: number;
     }>;
-    findOne(id: number): Promise<UserEntity>;
+    findOne(id: number): Promise<Omit<UserEntity, 'passwordHash'>>;
     findByEmail(email: string): Promise<UserEntity | null>;
     findByUsername(username: string): Promise<UserEntity | null>;
     create(username: string, email: string, passwordHash: string): Promise<UserEntity>;
-    update(id: number, username?: string, email?: string, password?: string): Promise<UserEntity>;
+    update(id: number, username?: string, email?: string, password?: string, currentPassword?: string, profilePictureUrl?: string): Promise<Omit<UserEntity, 'passwordHash'>>;
     remove(id: number): Promise<{
         message: string;
     }>;
