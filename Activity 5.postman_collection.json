@@ -1,0 +1,319 @@
+{
+	"info": {
+		"_postman_id": "64cebf0f-52fe-4b07-8432-e802eb72a050",
+		"name": "Activity 5",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "48814926",
+		"_collection_link": "https://blickyy213285-2421396.postman.co/workspace/0624e171-d57d-44ee-81a6-c7b72ccf849f/collection/48814926-64cebf0f-52fe-4b07-8432-e802eb72a050?action=share&source=collection_link&creator=48814926"
+	},
+	"item": [
+		{
+			"name": "Register User",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"Raymond\",\r\n    \"email\": \"raymondmaybach02@gmail.com\",\r\n    \"password\": \"Raymond1234\"\r\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4000/auth/register",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"auth",
+						"register"
+					]
+				},
+				"description": "This registers a new user to the database"
+			},
+			"response": []
+		},
+		{
+			"name": "Login User",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"raymondmaybach02@gmail.com\",\r\n    \"password\": \"Raymond1234\"\r\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4000/auth/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"auth",
+						"login"
+					]
+				},
+				"description": "After Loging In it will create an access token to be used in Bearer Token"
+			},
+			"response": []
+		},
+		{
+			"name": "Create a Post",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjMsImVtYWlsIjoicmF5bW9uZG1heWJhY2gwMkBnbWFpbC5jb20iLCJ1c2VybmFtZSI6IlJheW1vbmQiLCJpYXQiOjE3NjIwNjU1MTksImV4cCI6MTc2MjE1MTkxOX0.G72xs9nCGKmfA22baUCe1LulQnjrXn2pXYXHxzrWNGY",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"My Post Title\",\r\n    \"content\": \"Post content here\"\r\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4000/posts",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"posts"
+					]
+				},
+				"description": "This will create a new post using the account created"
+			},
+			"response": []
+		},
+		{
+			"name": "GETS All Posts",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:4000/posts",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"posts"
+					]
+				},
+				"description": "This will show all posts without needing an authorization"
+			},
+			"response": []
+		},
+		{
+			"name": "Update a Post",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjMsImVtYWlsIjoicmF5bW9uZG1heWJhY2gwMkBnbWFpbC5jb20iLCJ1c2VybmFtZSI6IlJheW1vbmQiLCJpYXQiOjE3NjIwNjU1MTksImV4cCI6MTc2MjE1MTkxOX0.G72xs9nCGKmfA22baUCe1LulQnjrXn2pXYXHxzrWNGY",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"My Edited Post Title\",\r\n    \"content\": \"Edited content here\"\r\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4000/posts/4",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"posts",
+						"4"
+					]
+				},
+				"description": "This will only update a post that was created by the person made the post"
+			},
+			"response": []
+		},
+		{
+			"name": "Delete a Post",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjMsImVtYWlsIjoicmF5bW9uZG1heWJhY2gwMkBnbWFpbC5jb20iLCJ1c2VybmFtZSI6IlJheW1vbmQiLCJpYXQiOjE3NjIwNjU1MTksImV4cCI6MTc2MjE1MTkxOX0.G72xs9nCGKmfA22baUCe1LulQnjrXn2pXYXHxzrWNGY",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:4000/posts/4",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"posts",
+						"4"
+					]
+				},
+				"description": "This will also delete a post made by the person created the post"
+			},
+			"response": []
+		},
+		{
+			"name": "GETS All Comments",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"description": "This will get all comments from the post without needing an authorization"
+			},
+			"response": []
+		},
+		{
+			"name": "Post a Comment",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"content\": \"This is a great post!\",\r\n    \"postId\": 3,\r\n    \"authorUsername\": \"Raymond\"\r\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4000/comments",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"comments"
+					]
+				},
+				"description": "This will post a comment but it does need authorization"
+			},
+			"response": []
+		},
+		{
+			"name": "Update a Comment",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjMsImVtYWlsIjoicmF5bW9uZG1heWJhY2gwMkBnbWFpbC5jb20iLCJ1c2VybmFtZSI6IlJheW1vbmQiLCJpYXQiOjE3NjIwNjU1MTksImV4cCI6MTc2MjE1MTkxOX0.G72xs9nCGKmfA22baUCe1LulQnjrXn2pXYXHxzrWNGY",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"content\": \"Updated comment text\",\r\n    \"authorUsername\": \"Raymond\"\r\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4000/comments/2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"comments",
+						"2"
+					]
+				},
+				"description": "This will update a comment that the person made by himself"
+			},
+			"response": []
+		},
+		{
+			"name": "Delete a Comment",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjMsImVtYWlsIjoicmF5bW9uZG1heWJhY2gwMkBnbWFpbC5jb20iLCJ1c2VybmFtZSI6IlJheW1vbmQiLCJpYXQiOjE3NjIwNjU1MTksImV4cCI6MTc2MjE1MTkxOX0.G72xs9nCGKmfA22baUCe1LulQnjrXn2pXYXHxzrWNGY",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4000/comments/2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"comments",
+						"2"
+					]
+				},
+				"description": "This will delete a comment that the person made by himself"
+			},
+			"response": []
+		}
+	]
+}
